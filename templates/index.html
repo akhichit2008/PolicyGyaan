@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>PolicyGyaan - Home</title>
+    <!-- Link to Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            background-color: #f7f9fc;
+            font-family: Arial, sans-serif;
+        }
+
+        .navbar {
+            background-color: #4CAF50;
+        }
+
+        .navbar-brand {
+            font-size: 24px;
+            font-weight: bold;
+            color: white;
+        }
+
+        .nav-link {
+            color: white !important;
+        }
+
+        .hero-section {
+            background: url('https://cdn.pixabay.com/photo/2010/12/13/10/33/westminster-palace-2892_640.jpg') no-repeat center center;
+            background-size: cover;
+            height: 400px;
+            color: white;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+        }
+
+        .hero-section h1 {
+            font-size: 50px;
+            font-weight: bold;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.5);
+        }
+
+        .policy-cards {
+            margin-top: 40px;
+        }
+
+        .card {
+            margin: 15px 0;
+        }
+
+        .btn-main {
+            background-color: #4CAF50;
+            color: white;
+            font-size: 18px;
+            padding: 10px 20px;
+            border-radius: 5px;
+            text-decoration: none;
+        }
+
+        .btn-main:hover {
+            background-color: #45a049;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 16px;
+            margin-top: 50px;
+            color: #555;
+        }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light">
+        <a class="navbar-brand" href="#" style="color: white;">PolicyGyaan</a>
+        <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+            <span class="navbar-toggler-icon"></span>
+        </button>
+        <div class="collapse navbar-collapse" id="navbarNav">
+            <ul class="navbar-nav ml-auto">
+                <li class="nav-item active">
+                    <a class="nav-link" href="/about-gyaan">About</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link" href="/register">Register</a>
+                </li>
+            </ul>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <div class="hero-section">
+        <h1>Welcome to PolicyGyaan</h1>
+        <p>Your guide to understanding government policies personalized for you</p>
+    </div>
+
+    <!-- Policy Cards Section -->
+    <div class="container policy-cards">
+        <div class="row">
+            <!-- Card 1: PM Internship Policy -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">PM Internship Policy</h5>
+                        <p class="card-text">An initiative that provides young students with practical exposure to government work and policy-making.</p>
+                        <a href="/policy/pm-internship-policy" class="btn-main">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 2: BioE3 Policy -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">BioE3 Policy</h5>
+                        <p class="card-text">A policy to promote bioengineering and environmental sustainability, focusing on green technologies.</p>
+                        <a href="/policy/bioe3-policy" class="btn-main">Learn More</a>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Card 3: Smart City Policy -->
+            <div class="col-md-4">
+                <div class="card">
+                    <div class="card-body">
+                        <h5 class="card-title">Smart City Policy</h5>
+                        <p class="card-text">A transformative policy to develop futuristic, sustainable cities leveraging technology for better living.</p>
+                        <a href="/policy/smart-city-policy" class="btn-main">Learn More</a>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Footer -->
+    <div class="footer">
+        <p>© 2025 PolicyGyaan. All Rights Reserved.</p>
+    </div>
+
+    <!-- Bootstrap JS and Popper.js (required for Bootstrap functionality) -->
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.4/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+</body>
+</html>
