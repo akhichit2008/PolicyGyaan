@@ -4,12 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Register - PolicyGyaan</title>
-    <!-- Link to Bootstrap CSS -->
+
+    <!-- Bootstrap CSS -->
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
-    <!-- Custom CSS for styling -->
+
+    <!-- Custom CSS -->
     <style>
         body {
-            background-image: url('https://cdn.pixabay.com/photo/2010/12/13/10/33/westminster-palace-2892_640.jpg'); /* 4K Nature background image */
+            background-image: url('https://cdn.pixabay.com/photo/2010/12/13/10/33/westminster-palace-2892_640.jpg');
             background-size: cover;
             background-position: center;
             font-family: Arial, sans-serif;
@@ -18,9 +20,9 @@
         }
         
         .registration-container {
-            max-width: 600px; /* Wider box */
+            max-width: 600px;
             margin: 50px auto;
-            background-color: rgba(255, 255, 255, 0.9); /* Light background for readability */
+            background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
             border-radius: 10px;
             box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
@@ -30,7 +32,7 @@
             text-align: center;
             font-size: 45px;
             font-weight: bold;
-            color: #4CAF50; /* Green color for the title */
+            color: #4CAF50;
             margin-bottom: 40px;
         }
         
@@ -63,14 +65,24 @@
             font-size: 16px;
             color: #555;
         }
+
+        .profile-pic-preview {
+            display: block;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            margin: 10px auto;
+            border: 3px solid #4CAF50;
+            object-fit: cover;
+        }
     </style>
 </head>
 <body>
 
-    <!-- Registration Form Container -->
+    <!-- Registration Form -->
     <div class="registration-container">
         <div class="title">PolicyGyaan</div>
-        <form method="POST">
+        <form method="POST" enctype="multipart/form-data">
             <div class="form-group">
                 <label for="name">Full Name</label>
                 <input type="text" class="form-control" id="name" name="name" required>
@@ -103,16 +115,38 @@
                 <label for="state">State</label>
                 <input type="text" class="form-control" id="state" name="state" required>
             </div>
+
+            <!-- Profile Picture Upload -->
+            <div class="form-group text-center">
+                <label for="profile_picture">Upload Profile Picture</label>
+                <input type="file" class="form-control-file" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewImage(event)">
+                <img id="profile-pic-preview" class="profile-pic-preview" src="https://via.placeholder.com/120" alt="Profile Preview">
+            </div>
+
             <button type="submit" class="btn btn-primary">Register</button>
         </form>
+
         <div class="footer">
             Already have an account? <a href="{{ url_for('login') }}">Login here</a>
         </div>
     </div>
 
-    <!-- Bootstrap JS and Popper.js (required for Bootstrap functionality) -->
-    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <!-- Bootstrap & jQuery -->
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.0.4/dist/umd/popper.min.js"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
+
+    <!-- Image Preview Script -->
+    <script>
+        function previewImage(event) {
+            var reader = new FileReader();
+            reader.onload = function() {
+                var output = document.getElementById('profile-pic-preview');
+                output.src = reader.result;
+            };
+            reader.readAsDataURL(event.target.files[0]);
+        }
+    </script>
+
 </body>
 </html>

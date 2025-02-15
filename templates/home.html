@@ -4,30 +4,49 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Home - Policies</title>
+    {% include "headers.html" %}
     <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        /* Custom styling for policy cards */
+        .policy-card {
+            background: #e3f2fd; /* Light blue background */
+            border-radius: 12px;
+            box-shadow: 2px 4px 10px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            padding: 20px;
+        }
+
+        .policy-card:hover {
+            transform: translateY(-8px); /* Moves the card slightly up */
+            box-shadow: 4px 8px 20px rgba(0, 0, 0, 0.2); /* Adds depth on hover */
+        }
+
+        .btn-primary {
+            background-color: #007bff;
+            border: none;
+        }
+
+        .btn-primary:hover {
+            background-color: #0056b3;
+        }
+    </style>
 </head>
 <body>
     <div class="container">
         <h1 class="mt-4 mb-4">Top Picks For You Today</h1>
         <div class="row">
-            <div class="col-md-4">
-                <div class="card mb-4">
+            {% for policy in policies %}
+            <div class="col-md-4 d-flex align-items-stretch">
+                <div class="card policy-card mb-4 w-100">
                     <div class="card-body">
-                        <h5 class="card-title">PM Internship Program</h5>
-                        <p class="card-text">Launched to provide young professionals with opportunities to work with various government departments, enhancing their skills and understanding of public administration. This initiative aims to bridge the gap between academic learning and practical experience for emerging professionals</p>
-                        <a href="{{url_for('policy_redirect',policy_title='PM Internship Policy')}}" class="btn btn-primary">View Details</a>
+                        <h5 class="card-title">{{ policy.title }}</h5>
+                        <p class="card-text">{{ policy.description[:150] }}...</p>
+                        <a href="{{ url_for('policy_redirect', policy_title=policy.title,policy_description=policy.description)}}" 
+                           class="btn btn-primary">View Details</a>
                     </div>
                 </div>
             </div>
-            <div class="col-md-4">
-                <div class="card mb-4">
-                    <div class="card-body">
-                        <h5 class="card-title">BioE3 Policy</h5>
-                        <p class="card-text">Introduced to promote the biotechnology sector, this policy offers incentives and support to professionals in the biotech industry, encouraging innovation and research. It aims to position India as a global leader in biotechnology by fostering a conducive environment for professionals in this field</p>
-                        <a href="{{url_for('policy_redirect',policy_title='BioE3 Policy - A policy to promote bioengineering and environmental sustainability, focusing on green technologies.')}}" class="btn btn-primary">View Details</a>
-                    </div>
-                </div>
-            </div>
+            {% endfor %}
         </div>
     </div>
     <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
