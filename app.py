@@ -10,13 +10,15 @@ import re
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = '/templates/static/UPLOAD_FOLDER'
+
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
 app.config['SECRET_KEY'] = 'policygyaanissecure'
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'UPLOAD_FOLDER')
+os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
-# Initialize database and migrations
+
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
@@ -28,9 +30,9 @@ llm = genai.GenerativeModel('gemini-1.5-flash')
 # Initialize Flask-Login
 login_manager = LoginManager()
 login_manager.init_app(app)
-login_manager.login_view = 'login'  # Redirect to login if user is not authenticated
+login_manager.login_view = 'login'
 
-# User Model (Database model for storing user information)
+
 class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
 	email = db.Column(db.String(120), unique=True, nullable=False)
@@ -45,7 +47,7 @@ class User(UserMixin, db.Model):
 	def __repr__(self):
 		return f'<User {self.name}>'
 
-# Load user from session
+
 @login_manager.user_loader
 def load_user(user_id):
 	return User.query.get(int(user_id))
@@ -91,7 +93,7 @@ def policy_redirect(policy_title):
 def profile():
 	return render_template("profile.html",user=current_user)
 
-# Home page - Displays policies (mock data here for the example)
+
 @app.route('/')
 @login_required
 def home():
@@ -127,7 +129,7 @@ def home():
 	]
 	return render_template('home.html', policies=policies)
 
-# Policy details page - Personalized impact based on current user
+
 @app.route('/policy/<string:policy_title>/<string:policy_description>')
 @login_required
 def policy_details(policy_title,policy_description):
@@ -161,7 +163,11 @@ def allowed_file(filename):
 	ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
 	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
-# Registration Page - Users can register
+@app.route('/about')
+def about():
+	return render_template('about.html')
+
+
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':

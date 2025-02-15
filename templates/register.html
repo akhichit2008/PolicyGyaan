@@ -11,17 +11,19 @@
     <!-- Custom CSS -->
     <style>
         body {
-            background-image: url('https://cdn.pixabay.com/photo/2010/12/13/10/33/westminster-palace-2892_640.jpg');
+            background-image: url("{{url_for('static',filename='bg.png')}}");
+            background-repeat: no-repeat;
             background-size: cover;
             background-position: center;
             font-family: Arial, sans-serif;
-            height: 100vh;
+            min-height: 100vh;
+            width: 100%;
             margin: 0;
         }
         
         .registration-container {
             max-width: 600px;
-            margin: 50px auto;
+            margin: 20px auto;
             background-color: rgba(255, 255, 255, 0.9);
             padding: 40px;
             border-radius: 10px;
@@ -78,7 +80,6 @@
     </style>
 </head>
 <body>
-
     <!-- Registration Form -->
     <div class="registration-container">
         <div class="title">PolicyGyaan</div>
@@ -120,7 +121,7 @@
             <div class="form-group text-center">
                 <label for="profile_picture">Upload Profile Picture</label>
                 <input type="file" class="form-control-file" id="profile_picture" name="profile_picture" accept="image/*" onchange="previewImage(event)">
-                <img id="profile-pic-preview" class="profile-pic-preview" src="https://via.placeholder.com/120" alt="Profile Preview">
+                <img id="profile-pic-preview" class="profile-pic-preview" src="#" alt="Profile Preview">
             </div>
 
             <button type="submit" class="btn btn-primary">Register</button>
