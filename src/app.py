@@ -10,55 +10,12 @@ import re
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import json
+from utils import process_indices
+from __init__ import *
+from models import User
 
-UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'UPLOAD_FOLDER')
-SECRET_KEY = os.getenv("SECRET_KEY")
-GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
-SQLALCHEMY_DATABASE_URI = 'sqlite:///users.db'
-
-app = Flask(__name__)
-app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
-os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
-app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
-
-
-db = SQLAlchemy(app)
-migrate = Migrate(app, db)
-
-
-client = genai.Client(api_key=GOOGLE_API_KEY)
-
-
-login_manager = LoginManager()
-login_manager.init_app(app)
-login_manager.login_view = 'login'
-
-# Utility Function
-
-def process_indices(indices):
-    indices_new = []
-    print(indices.split())
-    for indice in indices.split():
-        if "," in indice:
-            indices_new.append(int(indice.strip()[:len(indice)-1]))
-        else:
-            indices_new.append(int(indice.strip()))
-    return indices_new
-
-class User(UserMixin, db.Model):
-	id = db.Column(db.Integer, primary_key=True)
-	email = db.Column(db.String(120), unique=True, nullable=False)
-	password = db.Column(db.String(200), nullable=False)
-	name = db.Column(db.String(100), nullable=False)
-	profession = db.Column(db.String(100), nullable=False)
-	age = db.Column(db.Integer, nullable=False)
-	gender = db.Column(db.String(10), nullable=False)
-	state = db.Column(db.String(100), nullable=False)
-	profile_image = db.Column(db.String(200), nullable=True, default="default.jpg")
-
-	def __repr__(self):
-		return f'<User {self.name}>'
+app_config = AppConfig()
+client = app_config.get_llm_client()
 
 
 @login_manager.user_loader
@@ -319,5 +276,6 @@ def logout():
 	logout_user()
 	return redirect(url_for('login'))
 
-if __name__ == '__main__':
-	app.run(host="127.0.0.1",port=8000,debug=True)
+
+if __name__=="__main__":
+	app_config.run()

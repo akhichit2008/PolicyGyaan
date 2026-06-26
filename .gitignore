@@ -1,4 +1,4 @@
-/instance/*
-/migrations/*
+/src/instance/*
+/src/migrations/*
 .env
-/__pycache__/*
+/src/__pycache__/*
