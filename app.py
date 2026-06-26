@@ -5,17 +5,20 @@ from flask_login import LoginManager, UserMixin, login_user, login_required, cur
 import requests
 import json
 import os
-import google.generativeai as genai
+from google import genai
 import re
 from dotenv import load_dotenv
 from werkzeug.utils import secure_filename
 import json
 
+UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'UPLOAD_FOLDER')
+SECRET_KEY = os.getenv("SECRET_KEY")
+GOOGLE_API_KEY = os.getenv("GOOGLE_API_KEY")
+SQLALCHEMY_DATABASE_URI = 'sqlite:///users.db'
 
 app = Flask(__name__)
 app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///users.db'
-app.config['SECRET_KEY'] = 'policygyaanissecure'
-UPLOAD_FOLDER = os.path.join(app.root_path, 'static', 'UPLOAD_FOLDER')
+app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
 os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
 app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 
@@ -23,16 +26,25 @@ app.config['UPLOAD_FOLDER'] = UPLOAD_FOLDER
 db = SQLAlchemy(app)
 migrate = Migrate(app, db)
 
-GOOGLE_API_KEY = os.getenv('GOOGLE_API_KEY')
-genai.configure(api_key=GOOGLE_API_KEY)
 
-llm = genai.GenerativeModel('gemini-1.5-flash')
+client = genai.Client(api_key=GOOGLE_API_KEY)
 
-# Initialize Flask-Login
+
 login_manager = LoginManager()
 login_manager.init_app(app)
 login_manager.login_view = 'login'
 
+# Utility Function
+
+def process_indices(indices):
+    indices_new = []
+    print(indices.split())
+    for indice in indices.split():
+        if "," in indice:
+            indices_new.append(int(indice.strip()[:len(indice)-1]))
+        else:
+            indices_new.append(int(indice.strip()))
+    return indices_new
 
 class User(UserMixin, db.Model):
 	id = db.Column(db.Integer, primary_key=True)
@@ -63,19 +75,33 @@ def policy_redirect(policy_title):
 	Key Benefits: Key benefits of policy {policy_title},\
 	Challenges: Challenges of policy {policy_title}"
 	print(prompt)
-	response = llm.generate_content(prompt)
+	response = response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=prompt
+	)
 	res = response.text
 	print(res)
+	# Pattern-Oriented Filtering to Avoid unwanted symbols in LLM API outputs
 	policy_overview = re.search(r"(?i)\*\*.*?Overview.*?\*\*\s*(.*?)(?=\n\s*\*\*|\Z)", res, re.DOTALL)
+
 	impact_on_you = re.search(r"(?i)\*\*.*?Impact.*?\*\*\s*(.*?)(?=\n\s*\*\*|\Z)", res, re.DOTALL)
+
 	history = re.search(r"(?i)\*\*.*?History.*?\*\*\s*(.*?)(?=\n\s*\*\*|\Z)", res, re.DOTALL)
+
 	key_benefits = re.search(r"(?i)\*\*.*?Benefits.*?\*\*\s*(.*?)(?=\n\s*\*\*|\Z)", res, re.DOTALL)
-	challenges = re.search(r"(?i)\*\*.*?Challenges.*?\*\*\s*(.*)", res, re.DOTALL)  # Last section
+
+	challenges = re.search(r"(?i)\*\*.*?Challenges.*?\*\*\s*(.*)", res, re.DOTALL) # Last section
+
 	policy_overview = policy_overview.group(1).strip() if policy_overview else "Not available"
+
 	impact_on_you = impact_on_you.group(1).strip() if impact_on_you else "Not available"
+
 	history = history.group(1).strip() if history else "Not available"
+
 	key_benefits = key_benefits.group(1).strip() if key_benefits else "Not available"
+
 	challenges = challenges.group(1).strip() if challenges else "Not available"
+
 	print("Policy Overview: ",policy_overview)
 	print("Impact: ",impact_on_you)
 
@@ -187,14 +213,18 @@ def home():
     ]
 
 	prompt = f"""From this using the user's info as given :- {current_user.profession}, {current_user.state} {current_user.gender}, {current_user.age} just suggest me the indices from this policy list that I can display to this user :- {policies}. Dont return anything else only return a single line with indices thats all"""
-	res = llm.generate_content(prompt)
+	res = response = response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=prompt
+	)
 	res = res.text
 	print(res)
-	res = json.loads(res)
+	policy_indices = process_indices(res)
 	pol = []
-	for i in res:
+	for i in policy_indices:
 		pol.append(policies[i])
 	return render_template('home.html', policies=pol)
+
 
 
 @app.route('/policy/<string:policy_title>/<string:policy_description>')
@@ -208,7 +238,10 @@ def policy_details(policy_title,policy_description):
 	Challenges: Challenges of policy {policy_title}\
 	(remeber to address as 'you' instead of he, him or any other pronouns)"
 	print(prompt)
-	response = llm.generate_content(prompt)
+	response = response = response = client.models.generate_content(
+    model="gemini-2.5-flash",
+    contents=prompt
+	)
 	res = response.text
 	print(res)
 
@@ -238,7 +271,6 @@ def about():
 @app.route('/register', methods=['GET', 'POST'])
 def register():
 	if request.method == 'POST':
-		# Get form data
 		name = request.form['name']
 		email = request.form['email']
 		password = request.form['password']
@@ -247,24 +279,24 @@ def register():
 		gender = request.form['gender']
 		state = request.form['state']
 		profile_picture = request.files['profile_picture']
-		filename = "default.jpg"  # Default profile picture
+		filename = "default.jpg"
 		if profile_picture and allowed_file(profile_picture.filename):
-			filename = secure_filename(f"user_{email}.jpg")  # Unique filename
+			filename = secure_filename(f"user_{email}.jpg")
 			file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 			profile_picture.save(file_path)
 		else:
-			filename = "default.jpg"  # Default profile image
+			filename = "default.jpg"
 		new_user = User(name=name, email=email, password=password, profession=profession, age=age, gender=gender, state=state,profile_image=filename)
 		db.session.add(new_user)
 		db.session.commit()
 
-		# Log the user in after successful registration
+	
 		login_user(new_user)
 
-		return redirect(url_for('home'))  # Redirect to home after successful registration
+		return redirect(url_for('home')) 
 	return render_template('register.html')
 
-# Login Page - Users can log in
+
 @app.route('/login', methods=['GET', 'POST'])
 def login():
 	if request.method == 'POST':
@@ -272,7 +304,7 @@ def login():
 		password = request.form['password']
 		user = User.query.filter_by(email=email).first()
 
-		if user and user.password == password:  # Simple password check, use hashed passwords in real apps!
+		if user and user.password == password:
 			login_user(user)
 			return redirect(url_for('home'))
 		else:
@@ -280,7 +312,7 @@ def login():
 
 	return render_template('login.html')
 
-# Logout functionality
+
 @app.route('/logout')
 @login_required
 def logout():
