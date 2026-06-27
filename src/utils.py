@@ -22,6 +22,10 @@ def load_default_policy():
     print(policies)
     return policies
 
+def allowed_file(filename):
+	ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'gif'}
+	return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
 
 def policy_filter(res):
     # Pattern-Oriented Filtering to Avoid unwanted symbols in LLM API outputs
