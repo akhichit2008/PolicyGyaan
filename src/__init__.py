@@ -5,6 +5,7 @@ from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
 from google import genai
 from flask_login import LoginManager
+import sys
 
 
 app = Flask(__name__)
@@ -27,6 +28,7 @@ class AppConfig:
         self.port = os.getenv("APPLICATION_PORT")
         self.host = os.getenv("APPLICATION_HOST")
         self.client = genai.Client(api_key=GOOGLE_API_KEY)
+        
 
         app.config['SECRET_KEY'] = os.getenv("SECRET_KEY")
         os.makedirs(UPLOAD_FOLDER, exist_ok=True) 
@@ -37,4 +39,9 @@ class AppConfig:
 
     def run(self):
         print(f"Application Running : {self.app_name} @ {self.instance_id}")
-        app.run(host=self.host,port=self.port,debug=True)
+        if len(sys.argv) == 1:
+            debug = False
+        else:
+            if sys.argv[1].lower() == "debug":
+                debug = True
+        app.run(host=self.host,port=self.port,debug=debug)
