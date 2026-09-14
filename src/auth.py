@@ -3,6 +3,7 @@ from models import User
 from flask import request,redirect,url_for,render_template
 from flask_login import LoginManager, UserMixin, login_user, login_required, current_user, logout_user
 from utils import allowed_file
+import os
 
 @login_manager.user_loader
 def load_user(user_id):
@@ -21,7 +22,7 @@ def register():
 		profile_picture = request.files['profile_picture']
 		filename = "default.jpg"
 		if profile_picture and allowed_file(profile_picture.filename):
-			filename = secure_filename(f"user_{email}.jpg")
+			filename = f"user_{email}.jpg"
 			file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
 			profile_picture.save(file_path)
 		else:
